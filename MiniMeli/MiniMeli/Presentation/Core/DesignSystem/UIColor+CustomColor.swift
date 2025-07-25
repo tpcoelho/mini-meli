@@ -47,8 +47,8 @@ struct Colors {
     
     struct Background {
         static var base = UIColor(hex: "#FFFDE7")                // Amarelo muito claro
-        static var variant01 = UIColor(hex: "#FFF9C4")           // Bem suave
-        static var variant02 = UIColor(hex: "#F1F3F2")
+        static var variant01 = UIColor(hex: "#F2D06B")           // Bem suave
+        static var variant02 = UIColor(hex: "#E3F2FD")
     }
     
     struct Border {

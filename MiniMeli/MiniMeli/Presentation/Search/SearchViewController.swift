@@ -1,16 +1,17 @@
 //
-//  PreLoginViewController.swift
+//  SearchViewController.swift
 //  MiniMeli
 //
 //  Created by Tiago P. Coelho on 24/07/25.
 //
 
+
 import UIKit
 
-class PreLoginViewController: UIViewController {
+class SearchViewController: UIViewController {
     
-    private lazy var mainView: PreLoginView = {
-        let view = PreLoginView(delegate: self)
+    private lazy var mainView: SearchView = {
+        let view = SearchView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -24,7 +25,7 @@ class PreLoginViewController: UIViewController {
     }
 }
 
-extension PreLoginViewController: ViewCodeConfiguration {
+extension SearchViewController: ViewCodeConfiguration {
     func buildViewHierarchy() {
         view.addSubview(mainView)
     }
@@ -36,21 +37,5 @@ extension PreLoginViewController: ViewCodeConfiguration {
             mainView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mainView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-}
-
-extension PreLoginViewController: PreLoginViewDelegate {
-    func startWithAPI() {
-        guard let navController = navigationController else {
-            fatalError("NavigationController is not available!!!")
-        }
-        MiniMeliCoordinator(navController).start()
-    }
-    
-    func startWithMock() {
-        guard let navController = navigationController else {
-            fatalError("NavigationController is not available!!!")
-        }
-        MiniMeliCoordinator(navController).startMock()
     }
 }

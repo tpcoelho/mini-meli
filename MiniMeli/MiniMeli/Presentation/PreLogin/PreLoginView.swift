@@ -7,6 +7,11 @@
 
 import UIKit
 
+protocol PreLoginViewDelegate: AnyObject {
+    func startWithAPI()
+    func startWithMock()
+}
+
 class PreLoginView: UIView {
     private struct Layout {
         static let buttonWidth: CGFloat = 220
@@ -47,8 +52,11 @@ class PreLoginView: UIView {
         return stack
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    private weak var delegate: PreLoginViewDelegate?
+    
+    init(delegate: PreLoginViewDelegate) {
+        self.delegate = delegate
+        super.init(frame: .zero)
         setupView()
     }
     
@@ -60,12 +68,12 @@ class PreLoginView: UIView {
     // MARK: - Private methods
     @objc
     private func apiButtonTapped() {
-        print("api")
+        delegate?.startWithAPI()
     }
     
     @objc
     private func mockButtonTapped() {
-        print("mock")
+        delegate?.startWithMock()
     }
 }
 
@@ -90,6 +98,6 @@ extension PreLoginView: ViewCodeConfiguration {
     func configureViews() {
         backgroundColor = Colors.Background.base
         apiButton.addTarget(self, action: #selector(apiButtonTapped), for: .touchUpInside)
-                mockButton.addTarget(self, action: #selector(mockButtonTapped), for: .touchUpInside)
+        mockButton.addTarget(self, action: #selector(mockButtonTapped), for: .touchUpInside)
     }
 }
