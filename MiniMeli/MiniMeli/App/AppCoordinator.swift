@@ -24,7 +24,7 @@ class AppCoordinator: BaseCoordinator {
     }
     
     func start() {
-        let vc = ViewController()
+        let vc = PreLoginViewController()
         navigationController.pushViewController(vc, animated: false)
     }
 }
