@@ -14,17 +14,36 @@ protocol SearchViewModelProtocol: AnyObject {
 }
 
 class SearchViewModelImpl: SearchViewModelProtocol {
-    var coordinator: MiniMeliCoordinator
     
-    init(coordinator: MiniMeliCoordinator) {
+    var coordinator: MiniMeliCoordinator
+    private let searchService: SearchService
+    
+    init(coordinator: MiniMeliCoordinator, searchService: SearchService) {
         self.coordinator = coordinator
+        self.searchService = searchService
     }
     
     func search(_ text: String?) {
+        guard let textSearch = text else {
+            // TODO: Criar Error
+            coordinator.route(.error)
+            return
+        }
         LoadingHUD.shared.start()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-            LoadingHUD.shared.stop()
-            self?.coordinator.route(.searchResult)
+        Task {
+            do {
+                let result = try await searchService.search(query: textSearch)
+                await MainActor.run {
+                    LoadingHUD.shared.stop()
+                    self.coordinator.route(.searchResult(result))
+                }
+            } catch {
+                await MainActor.run {
+                    LoadingHUD.shared.stop()
+                    // TODO: Criar Error
+                    self.coordinator.route(.error)
+                }
+            }
         }
     }
 }

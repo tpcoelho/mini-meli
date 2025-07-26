@@ -9,13 +9,14 @@ import UIKit
 
 enum MiniMeliRoute {
     case search
-    case searchResult
+    case searchResult([Product])
     case itemDetails
     case error
 }
 
 class MiniMeliCoordinator: BaseCoordinator {
     var navigationController: UINavigationController
+    private var provider: RequestProvider = LocalNetwork()
     
     init(_ navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -26,17 +27,18 @@ class MiniMeliCoordinator: BaseCoordinator {
     }
     
     func startMock() {
+        provider = LocalNetwork()
         route(.search)
     }
     
     func route(_ route: MiniMeliRoute) {
         switch route {
         case .search:
-            let viewModel = SearchViewModelImpl(coordinator: self)
+            let viewModel = SearchViewModelImpl(coordinator: self, searchService: SearchService(request: provider))
             let vc = SearchViewController(viewModel: viewModel)
             navigationController.pushViewController(vc, animated: false)
-        case .searchResult:
-            print("open searchResult")
+        case .searchResult(let result):
+            print("open searchResult ", result.count)
             break
         case .itemDetails:
             print("open itemDetails")
