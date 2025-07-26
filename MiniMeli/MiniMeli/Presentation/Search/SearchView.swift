@@ -8,7 +8,12 @@
 
 import UIKit
 
+protocol SearchViewDelegate: AnyObject {
+    func textFieldShouldReturn(_ text: String?)
+}
+
 class SearchView: UIView {
+    // MARK: - UI properties
     private struct Text {
         static let placeHolder: String = "Encontre produtos no MiniMeli"
     }
@@ -41,13 +46,17 @@ class SearchView: UIView {
         textField.layer.cornerRadius = Space.s8
         textField.clearButtonMode = .never
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.leftViewMode = .always
+        textField.leftViewMode = .unlessEditing
         textField.rightViewMode = .always
+        textField.returnKeyType = .search
         return textField
     }()
+    // MARK: - Internal properties
+    private weak var viewDelegate: SearchViewDelegate?
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewDelegate: SearchViewDelegate) {
+        self.viewDelegate = viewDelegate
+        super.init(frame: .zero)
         setupView()
     }
     
@@ -106,5 +115,11 @@ extension SearchView: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         updateSearchBarState(isEditing: false)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.endEditing(true)
+        viewDelegate?.textFieldShouldReturn(textField.text)
+        return true
     }
 }

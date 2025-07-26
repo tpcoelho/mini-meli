@@ -9,14 +9,15 @@
 import UIKit
 
 class SearchViewController: UIViewController {
-    
     private lazy var mainView: SearchView = {
-        let view = SearchView()
+        let view = SearchView(viewDelegate: self)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    private let viewModel: SearchViewModelProtocol
     
-    init() {
+    init(viewModel: SearchViewModelProtocol) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         setupView()
     }
@@ -37,5 +38,11 @@ extension SearchViewController: ViewCodeConfiguration {
             mainView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mainView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+}
+
+extension SearchViewController: SearchViewDelegate {
+    func textFieldShouldReturn(_ text: String?) {
+        viewModel.search(text)
     }
 }
