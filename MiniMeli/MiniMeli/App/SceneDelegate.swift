@@ -21,6 +21,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let navigationController: UINavigationController = .init()
 
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = Colors.Background.base
+        appearance.shadowColor = .clear 
+        appearance.backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
+
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().tintColor = Colors.Text.text
+        
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         

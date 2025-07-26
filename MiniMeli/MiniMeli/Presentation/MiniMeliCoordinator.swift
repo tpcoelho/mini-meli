@@ -20,6 +20,7 @@ class MiniMeliCoordinator: BaseCoordinator {
     
     init(_ navigationController: UINavigationController) {
         self.navigationController = navigationController
+        navigationController.setNavigationBarHidden(false, animated: false)
     }
     
     func start() {
@@ -39,7 +40,9 @@ class MiniMeliCoordinator: BaseCoordinator {
             navigationController.pushViewController(vc, animated: false)
         case .searchResult(let result):
             print("open searchResult ", result.count)
-            break
+            let viewModel = SearchResultListViewModelImpl(coordinator: self, service: ItemService(request: provider), productsList: result)
+            let vc = SearchResultListViewController(viewModel: viewModel)
+            navigationController.pushViewController(vc, animated: false)
         case .itemDetails:
             print("open itemDetails")
             break
