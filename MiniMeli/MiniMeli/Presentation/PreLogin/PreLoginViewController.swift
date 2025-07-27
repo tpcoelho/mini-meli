@@ -37,6 +37,9 @@ extension PreLoginViewController: ViewCodeConfiguration {
             mainView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+    func configureViews() {
+        setupNavigationBar()
+    }
 }
 
 extension PreLoginViewController: PreLoginViewDelegate {

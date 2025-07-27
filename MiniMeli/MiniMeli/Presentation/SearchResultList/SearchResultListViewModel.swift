@@ -13,8 +13,8 @@ protocol SearchResultListViewModelProtocol: AnyObject {
     var viewOutput: SearchResultListViewModelOutput? { get set }
     var productsList: [Product] { get set }
     
-    func viewDidLoad()
     func openDetails(for selectedItem: Product)
+    func loadImage(for url: String) async -> Data?
 }
 enum SearchResultListState {
     case loading
@@ -30,29 +30,24 @@ class SearchResultListViewModelImpl: SearchResultListViewModelProtocol {
     var productsList: [Product]
     weak var viewOutput: SearchResultListViewModelOutput?
     
-    private let service: ItemService
+    private let itemService: ItemService
+    private let imgService: ImageService
     
-    init(coordinator: MiniMeliCoordinator, service: ItemService, productsList: [Product] = []) {
+    init(coordinator: MiniMeliCoordinator,
+         itemService: ItemService,
+         imgService: ImageService,
+         productsList: [Product] = []) {
         self.coordinator = coordinator
-        self.service = service
+        self.itemService = itemService
+        self.imgService = imgService
         self.productsList = productsList
-    }
-    
-    func viewDidLoad() {
-        Task { [weak self] in
-            await self?.loadListItem()
-        }
     }
     
     func openDetails(for selectedItem: Product) {
         coordinator.route(.itemDetails)
     }
     
-    @MainActor
-    private func loadListItem() async {
-//        viewOutput?.updateState(.loading)
-//        try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-//        self.currentSummary = self.storage.getSummary() ?? KingdomSummaryModel()
-//        self.viewOutput?.updateState(.refreshList(self.currentSummary))
+    func loadImage(for url: String) async -> Data? {
+        return try? await imgService.getItmage(from: url)
     }
 }

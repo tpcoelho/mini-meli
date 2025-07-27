@@ -11,13 +11,20 @@ import UIKit
 class SearchResultListView: UIView {
     
     // MARK: - Properties
+    lazy var menuBar: UIView = {
+        let view = UIView(frame: .zero)
+        view.backgroundColor = .red
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(SearchResultItemCell.self, forCellReuseIdentifier: "SearchResultItemCell")
         //TODO: Criar cell para fim da busca
 //        tableView.register(NoMoreItemsCell.self, forCellReuseIdentifier: "NoMoreItemsCell")
         
-        tableView.estimatedRowHeight = 100
+        tableView.estimatedRowHeight = 70
         tableView.rowHeight = UITableView.automaticDimension
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
@@ -43,15 +50,25 @@ class SearchResultListView: UIView {
 
 extension SearchResultListView: ViewCodeConfiguration {
     func buildViewHierarchy() {
+        addSubview(menuBar)
         addSubview(tableView)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+//            menuBar.topAnchor.constraint(equalTo: topAnchor, constant: Space.s24),
+//            menuBar.leadingAnchor.constraint(equalTo: leadingAnchor),
+//            menuBar.trailingAnchor.constraint(equalTo: trailingAnchor),
+//            menuBar.heightAnchor.constraint(equalToConstant: 50),
+            
             tableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -Space.s8)
         ])
+    }
+    
+    func configureViews() {
+        backgroundColor = Colors.Contrast.white
     }
 }

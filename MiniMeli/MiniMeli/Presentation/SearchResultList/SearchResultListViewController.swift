@@ -14,6 +14,7 @@ class SearchResultListViewController: UIViewController {
         let view = SearchResultListView()
         view.tableView.delegate = self
         view.tableView.dataSource = self
+        navigationItem.titleView = view.menuBar
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -33,7 +34,6 @@ class SearchResultListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.viewOutput = self
-        viewModel.viewDidLoad()
     }
 }
 
@@ -52,7 +52,8 @@ extension SearchResultListViewController: ViewCodeConfiguration {
     }
     
     func configureViews() {
-        view.backgroundColor = Colors.Background.base
+        view.backgroundColor = Colors.Contrast.white
+        setupNavigationBar()
     }
 }
 
@@ -91,5 +92,9 @@ extension SearchResultListViewController: SearchResultItemCellDelegate {
             let item = viewModel.productsList[indexPath.row]
             viewModel.openDetails(for: item)
         }
+    }
+    
+    func loadImage(for url: String) async -> Data? {
+        return await viewModel.loadImage(for: url)
     }
 }

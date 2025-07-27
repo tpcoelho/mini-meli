@@ -26,9 +26,9 @@ extension UIColor {
 
 struct Colors {
     struct Action {
-        static var primary = UIColor(hex: "#002B5B")             // Azul principal ML
+        static var primary = UIColor(hex: "#002B5B")             // Azul principal Forte
         static var primaryVariant = UIColor(hex: "#336B9A")      // Azul médio mais claro
-        static var secondary = UIColor(hex: "#FFEB3B")           // Amarelo mais forte (ainda legível)
+        static var secondary = UIColor(hex: "#FFEB3B")           // Amarelo forte
         static var secondaryVariant = UIColor(hex: "#FFF176")    // Amarelo claro
         static var disabled = UIColor(hex: "#CFD1D3")
         static var disabledVariant = UIColor(hex: "#5F6D66")

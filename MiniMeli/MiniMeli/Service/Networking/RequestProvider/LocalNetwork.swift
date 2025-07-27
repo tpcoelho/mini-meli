@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class LocalNetwork: RequestProvider {
     func fetch<T: Decodable>(endpoint: String, query: String) async throws -> T {
@@ -22,6 +23,17 @@ class LocalNetwork: RequestProvider {
             print(error)
             throw  NSError(domain: "LocalNetwork", code: 1, userInfo: [NSLocalizedDescriptionKey: "Json is not valid"])
         }
+    }
+    
+    func fetchImage(url: URL) async throws -> Data? {
+        guard let image = UIImage(named: "default_thumbnail") else {
+            print("Imagem 'default_thumbnail' não encontrada nos Assets.")
+            return nil
+        }
+        if let pngData = image.pngData() {
+            return pngData
+        }
+        return image.jpegData(compressionQuality: 1.0)
     }
 }
 // MARK: - Helper

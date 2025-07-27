@@ -10,6 +10,7 @@ import UIKit
 
 protocol SearchResultItemCellDelegate: AnyObject {
     func cellDidSingleTap(_ cell: SearchResultItemCell)
+    func loadImage(for url: String) async -> Data?
 }
 
 class SearchResultItemCell: UITableViewCell {
@@ -17,68 +18,79 @@ class SearchResultItemCell: UITableViewCell {
     // MARK: - Properties
     private lazy var containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = Colors.Background.variant01
-        view.layer.cornerRadius = Space.s16
+        view.backgroundColor = Colors.Background.variant02
+        view.layer.cornerRadius = Space.s12
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    private let iconImg: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: Space.s16, weight: .medium)
-        label.textColor = Colors.Feedback.information
-        label.text = "\u{2605}" // Unicode for star icon
-        label.textAlignment = .center
-        //        label.backgroundColor = NFColors.Background.variant02
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var shimmerView: ShimmerView = {
+        let view = ShimmerView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: Space.s16, weight: .medium)
-        label.textColor = Colors.Feedback.information
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var itemImageView: UIImageView = {
+        let image = UIImageView()
+        image.contentMode = .scaleAspectFit
+        image.clipsToBounds = true
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.isHidden = true
+        return image
     }()
     
-    private let descriptionLabel: UILabel = {
+    
+    private let priceLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: Space.s16, weight: .bold)
+        label.textColor = Colors.Text.heading01
+        label.numberOfLines = 1
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    private let quantityLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: Space.s12, weight: .light)
         label.textColor = Colors.Feedback.information
+        label.numberOfLines = 1
+        label.textAlignment = .right
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private lazy var infoStackView: UIStackView = {
-        let icon1 = UIImageView(image: UIImage(systemName: "star"))
-        icon1.translatesAutoresizingMaskIntoConstraints = false
-        icon1.widthAnchor.constraint(equalToConstant: Spacing.sm).isActive = true
-        icon1.heightAnchor.constraint(equalToConstant: Spacing.sm).isActive = true
-        
-        let icon2 = UIImageView(image: UIImage(systemName: "heart"))
-        icon2.translatesAutoresizingMaskIntoConstraints = false
-        icon2.widthAnchor.constraint(equalToConstant: Spacing.sm).isActive = true
-        icon2.heightAnchor.constraint(equalToConstant: Spacing.sm).isActive = true
-        
-        let icon3 = UIImageView(image: UIImage(systemName: "bell"))
-        icon3.translatesAutoresizingMaskIntoConstraints = false
-        icon3.widthAnchor.constraint(equalToConstant: Spacing.sm).isActive = true
-        icon3.heightAnchor.constraint(equalToConstant: Spacing.sm).isActive = true
-        icon3.tintColor = Colors.Feedback.alert
-        
-        let stack = UIStackView(arrangedSubviews: [ icon1, icon2, icon3])
-        stack.spacing = 5
+    private lazy var firstRowStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [priceLabel, quantityLabel])
+        stack.axis = .horizontal
+        stack.spacing = Space.s4
+        stack.distribution = .fill
         stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.backgroundColor = .clear
         return stack
     }()
     
+    private let secondRowLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: Space.s16, weight: .regular)
+        label.textColor = Colors.Feedback.information
+        label.numberOfLines = 3
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let thirdRowLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: Space.s12, weight: .light)
+        label.textColor = Colors.Feedback.information
+        label.numberOfLines = 1
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private lazy var mainStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
+        let stack = UIStackView(arrangedSubviews: [firstRowStackView, secondRowLabel, thirdRowLabel])
         stack.axis = .vertical
         stack.spacing = Space.s4
-        stack.distribution = .fillProportionally
+        stack.distribution = .fill
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.backgroundColor = .clear
         return stack
@@ -105,8 +117,49 @@ class SearchResultItemCell: UITableViewCell {
     }
     
     func configureCell(_ item: Product) {
-//        titleLabel.text = item.name
-//        descriptionLabel.text = item.value.asCurrency()
+        priceLabel.text = item.price.asCurrency(currencyCode: item.currencyId)
+        quantityLabel.text = "\(DefaultText.quantity): \(item.availableQuantity)"
+        secondRowLabel.text = item.title
+        thirdRowLabel.text = "\(DefaultText.sellerBy): \(item.seller.nickname)"
+        Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+            await self?.setImage(from: item.thumbnail)
+        }
+    }
+    
+    @MainActor
+    func setImage(from urlString: String?) async {
+        shimmerView.startShimmer()
+        shimmerView.isHidden = false
+        itemImageView.image = nil
+        guard let urlString = urlString, !urlString.isEmpty else {
+            shimmerView.stopShimmering()
+            shimmerView.isHidden = true
+            itemImageNotAvailable()
+            return
+        }
+        
+        let data = await delegate?.loadImage(for: urlString)
+        shimmerView.stopShimmering()
+        shimmerView.isHidden = true
+        
+        if let data = data, let image = UIImage(data: data) {
+            itemImageView.image = image
+            itemImageView.isHidden = false
+        } else {
+            itemImageNotAvailable()
+        }
+    }
+    
+    private func itemImageNotAvailable() {
+        let config = UIImage.SymbolConfiguration(pointSize: Space.s32, weight: .regular)
+        itemImageView.image = UIImage(systemName: "cart.circle.fill", withConfiguration: config)
+        itemImageView.tintColor = Colors.Action.disabledVariant
+        itemImageView.layer.cornerRadius = Space.s8
+        itemImageView.clipsToBounds = true
+        itemImageView.contentMode = .center
+        itemImageView.isHidden = false
+        
     }
     
     @objc
@@ -119,31 +172,35 @@ class SearchResultItemCell: UITableViewCell {
 extension SearchResultItemCell: ViewCodeConfiguration {
     func buildViewHierarchy() {
         contentView.addSubview(containerView)
-        containerView.addSubview(iconImg)
+        containerView.addSubview(itemImageView)
+        containerView.addSubview(shimmerView)
         containerView.addSubview(mainStackView)
-        containerView.addSubview(infoStackView)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Spacing.xxs),
-            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Spacing.xxs),
-            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Spacing.xs),
-            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Spacing.xs),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Space.s4),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Space.s4),
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Space.s8),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Space.s8),
             
-            iconImg.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Spacing.xs),
-            iconImg.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            iconImg.heightAnchor.constraint(equalToConstant: Spacing.xxl),
-            iconImg.widthAnchor.constraint(equalToConstant: Spacing.xxl),
+            itemImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Space.s8),
+            itemImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Space.s16),
+            itemImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Space.s16),
+            itemImageView.heightAnchor.constraint(equalToConstant: Space.s80),
+            itemImageView.widthAnchor.constraint(equalToConstant: Space.s64),
             
-            mainStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Spacing.xxs),
-            mainStackView.leadingAnchor.constraint(equalTo: iconImg.trailingAnchor),
-            mainStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Spacing.xs),
+            shimmerView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Space.s8),
+            shimmerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Space.s16),
+            shimmerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Space.s16),
+            shimmerView.heightAnchor.constraint(equalToConstant: Space.s64),
+            shimmerView.widthAnchor.constraint(equalToConstant: Space.s48),
             
-            infoStackView.heightAnchor.constraint(equalToConstant: Spacing.sm),
-            infoStackView.topAnchor.constraint(equalTo: mainStackView.bottomAnchor),
-            infoStackView.trailingAnchor.constraint(equalTo: mainStackView.trailingAnchor, constant: -Spacing.xs),
-            infoStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -Spacing.xxs),
+            
+            mainStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Space.s8),
+            mainStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -Space.s8),
+            mainStackView.leadingAnchor.constraint(equalTo: itemImageView.trailingAnchor, constant: Space.s4),
+            mainStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Space.s8),
         ])
     }
     

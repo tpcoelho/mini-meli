@@ -20,6 +20,7 @@ class SearchViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         setupView()
+        setupNavigationBar()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
