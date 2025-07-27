@@ -44,7 +44,7 @@ class SearchResultListViewModelImpl: SearchResultListViewModelProtocol {
     }
     
     func openDetails(for selectedItem: Product) {
-        coordinator.route(.itemDetails)
+        coordinator.route(.itemDetails(selectedItem))
     }
     
     func loadImage(for url: String) async -> Data? {

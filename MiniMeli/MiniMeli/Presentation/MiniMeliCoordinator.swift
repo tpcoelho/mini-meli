@@ -10,7 +10,7 @@ import UIKit
 enum MiniMeliRoute {
     case search
     case searchResult([Product])
-    case itemDetails
+    case itemDetails(Product)
     case error
 }
 
@@ -39,16 +39,19 @@ class MiniMeliCoordinator: BaseCoordinator {
             let vc = SearchViewController(viewModel: viewModel)
             navigationController.pushViewController(vc, animated: false)
         case .searchResult(let result):
-            print("open searchResult ", result.count)
             let viewModel = SearchResultListViewModelImpl(coordinator: self,
                                                           itemService: ItemService(request: provider),
                                                           imgService: ImageService(request: provider),
                                                           productsList: result)
             let vc = SearchResultListViewController(viewModel: viewModel)
             navigationController.pushViewController(vc, animated: false)
-        case .itemDetails:
-            print("open itemDetails")
-            break
+        case .itemDetails(let selectedProduct):
+            let viewModel = ItemDetailsViewModelImpl(coordinator: self,
+                                                     itemService: ItemService(request: provider),
+                                                     imgService: ImageService(request: provider),
+                                                     product: selectedProduct)
+            let vc = ItemDetailsViewController(viewModel: viewModel)
+            navigationController.pushViewController(vc, animated: false)
         case .error:
             // Handler any error on this flow
             break
