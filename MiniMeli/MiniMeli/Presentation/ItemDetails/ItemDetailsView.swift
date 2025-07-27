@@ -119,20 +119,20 @@ class ItemDetailsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupDetails(for product: Product) {
-        categoryBreadcrumb.text = "Loja > Alimento > Arroz"
+    func setupDetails(for product: ProductDetailsResponse) {
+        categoryBreadcrumb.text = createBreadcrumb(categoryList: product.category.pathFromRoot)
         Task {
             await MainActor.run {
-                imageGallery.setImages([])
+                imageGallery.setImages(product.images ?? [])
             }
         }
-        titleLabel.text = product.title
-        priceLabel.text = product.price.asCurrency(currencyCode: product.currencyId)
-        quantityAvailableLabel.attributedText = formatTextWithBold(DefaultText.quantity, "\(product.availableQuantity)")
-        secondRowDetailsLabel.attributedText = formatTextWithBold(DefaultText.productCondition, "Novo")
-        sellerLabel.attributedText = formatTextWithBold(DefaultText.sellerBy, "\(product.seller.nickname)")
-        sellerCityLabel.attributedText = formatTextWithBold(DefaultText.sellerCity, "Florianopolis")
-        descriptionValueLabel.text = "Harina De Arroz Dicomere 1kg\n\nProducto alimenticio a base de arroz molido, ideal para recetas sin gluten. Este paquete contiene 1 kilogramo de harina de arroz de la marca Dicomere, perfecta para la elaboración de diversas preparaciones culinarias como panes, tortas y otros platillos que requieran de un sustituto de la harina de trigo. Su textura fina y su capacidad para absorber la humedad la hacen una opción versátil en la cocina. \n\nEste producto es apto para personas que llevan una dieta libre de gluten o para aquellos que desean experimentar con alternativas a la harina tradicional. La harina de arroz Dicomere es un ingrediente esencial para quienes buscan opciones saludables y nutritivas en su alimentación diaria."
+        titleLabel.text = product.productDetails.title
+        priceLabel.text = product.productDetails.price.asCurrency(currencyCode: product.productDetails.currencyId)
+        quantityAvailableLabel.attributedText = formatTextWithBold(DefaultText.quantity, "\(product.product.availableQuantity)")
+        secondRowDetailsLabel.attributedText = formatTextWithBold(DefaultText.productCondition, product.productDetails.condition)
+        sellerLabel.attributedText = formatTextWithBold(DefaultText.sellerBy, "\(product.product.seller.nickname)")
+        sellerCityLabel.attributedText = formatTextWithBold(DefaultText.sellerCity, product.productDetails.sellerAddress.city.name)
+        descriptionValueLabel.text = product.productDescription.plainText
     }
     
     private func formatTextWithBold(_ label: String, _ text: String) -> NSAttributedString {
@@ -141,6 +141,13 @@ class ItemDetailsView: UIView {
         let range = (newText as NSString).range(of: label)
         attributedText.addAttributes([.font: UIFont.systemFont(ofSize: Space.s12, weight: .bold)], range: range)
         return attributedText
+    }
+    
+    private func createBreadcrumb(categoryList: [SubCategory]) -> String {
+        guard !categoryList.isEmpty else {
+            return .empty
+        }
+        return categoryList.map { $0.name }.joined(separator: " > ")
     }
 }
 

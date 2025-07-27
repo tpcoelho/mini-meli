@@ -5,6 +5,8 @@
 //  Created by Tiago P. Coelho on 25/07/25.
 //
 
+import Foundation
+
 struct Product: Decodable {
     let id: String
     let title: String

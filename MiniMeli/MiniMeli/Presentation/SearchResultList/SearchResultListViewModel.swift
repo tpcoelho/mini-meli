@@ -30,15 +30,15 @@ class SearchResultListViewModelImpl: SearchResultListViewModelProtocol {
     var productsList: [Product]
     weak var viewOutput: SearchResultListViewModelOutput?
     
-    private let itemService: ItemService
+    private let productService: ProductService
     private let imgService: ImageService
     
     init(coordinator: MiniMeliCoordinator,
-         itemService: ItemService,
+         productService: ProductService,
          imgService: ImageService,
          productsList: [Product] = []) {
         self.coordinator = coordinator
-        self.itemService = itemService
+        self.productService = productService
         self.imgService = imgService
         self.productsList = productsList
     }

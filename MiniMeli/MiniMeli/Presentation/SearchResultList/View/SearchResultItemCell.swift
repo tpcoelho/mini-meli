@@ -85,9 +85,17 @@ class SearchResultItemCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    private let fourthRowLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: Space.s12, weight: .light)
+        label.textColor = Colors.Feedback.information
+        label.numberOfLines = 1
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     private lazy var mainStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [firstRowStackView, secondRowLabel, thirdRowLabel])
+        let stack = UIStackView(arrangedSubviews: [firstRowStackView, secondRowLabel, thirdRowLabel, fourthRowLabel])
         stack.axis = .vertical
         stack.spacing = Space.s4
         stack.distribution = .fill
@@ -121,8 +129,8 @@ class SearchResultItemCell: UITableViewCell {
         quantityLabel.text = "\(DefaultText.quantity): \(item.availableQuantity)"
         secondRowLabel.text = item.title
         thirdRowLabel.text = "\(DefaultText.sellerBy): \(item.seller.nickname)"
+        fourthRowLabel.text = "id: \(item.id)" // Mostrando o id apenas para facilitar o uso de mock
         Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
             await self?.setImage(from: item.thumbnail)
         }
     }
@@ -164,7 +172,6 @@ class SearchResultItemCell: UITableViewCell {
     
     @objc
     private func handleSingleTap() {
-        print("Cell single tapped")
         delegate?.cellDidSingleTap(self)
     }
 }
@@ -179,20 +186,19 @@ extension SearchResultItemCell: ViewCodeConfiguration {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            containerView.heightAnchor.constraint(lessThanOrEqualToConstant: 140),
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Space.s4),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Space.s4),
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Space.s8),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Space.s8),
             
             itemImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Space.s8),
-            itemImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Space.s16),
-            itemImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Space.s16),
+            itemImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             itemImageView.heightAnchor.constraint(equalToConstant: Space.s80),
             itemImageView.widthAnchor.constraint(equalToConstant: Space.s64),
             
             shimmerView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Space.s8),
-            shimmerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Space.s16),
-            shimmerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Space.s16),
+            shimmerView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             shimmerView.heightAnchor.constraint(equalToConstant: Space.s64),
             shimmerView.widthAnchor.constraint(equalToConstant: Space.s48),
             
@@ -206,5 +212,7 @@ extension SearchResultItemCell: ViewCodeConfiguration {
     
     func configureViews() {
         setupGestures()
+        secondRowLabel.setContentHuggingPriority(.defaultLow, for: .vertical)
+        secondRowLabel.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
     }
 }

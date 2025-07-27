@@ -40,14 +40,14 @@ class MiniMeliCoordinator: BaseCoordinator {
             navigationController.pushViewController(vc, animated: false)
         case .searchResult(let result):
             let viewModel = SearchResultListViewModelImpl(coordinator: self,
-                                                          itemService: ItemService(request: provider),
+                                                          productService: ProductService(request: provider),
                                                           imgService: ImageService(request: provider),
                                                           productsList: result)
             let vc = SearchResultListViewController(viewModel: viewModel)
             navigationController.pushViewController(vc, animated: false)
         case .itemDetails(let selectedProduct):
             let viewModel = ItemDetailsViewModelImpl(coordinator: self,
-                                                     itemService: ItemService(request: provider),
+                                                     productService: ProductService(request: provider),
                                                      imgService: ImageService(request: provider),
                                                      product: selectedProduct)
             let vc = ItemDetailsViewController(viewModel: viewModel)

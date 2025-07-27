@@ -12,7 +12,7 @@ final class CarouselImageCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(imageView)

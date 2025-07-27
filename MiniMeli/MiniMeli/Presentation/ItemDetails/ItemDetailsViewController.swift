@@ -71,7 +71,10 @@ extension ItemDetailsViewController: ItemDetailsViewModelOutput {
             LoadingHUD.shared.start()
         case .loaded:
             LoadingHUD.shared.stop()
-            mainView.setupDetails(for: viewModel.product)
+            guard let details = viewModel.productResponse else {
+                return
+            }
+            mainView.setupDetails(for: details)
         }
     }
 }

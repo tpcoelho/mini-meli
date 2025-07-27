@@ -14,7 +14,6 @@ class SearchResultListViewController: UIViewController {
         let view = SearchResultListView()
         view.tableView.delegate = self
         view.tableView.dataSource = self
-        navigationItem.titleView = view.menuBar
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -34,6 +33,11 @@ class SearchResultListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.viewOutput = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.titleView = mainView.menuBar
     }
 }
 

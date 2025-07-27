@@ -9,5 +9,5 @@ enum EndpointApi: String {
     case search
     case categories
     case description
-    case itemDetails
+    case productDetails
 }
