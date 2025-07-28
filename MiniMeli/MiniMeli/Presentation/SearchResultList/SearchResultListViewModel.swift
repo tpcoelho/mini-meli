@@ -13,13 +13,17 @@ protocol SearchResultListViewModelProtocol: AnyObject {
     var viewOutput: SearchResultListViewModelOutput? { get set }
     var productsList: [Product] { get set }
     
-    func openDetails(for selectedItem: Product)
     func loadImage(for url: String) async -> Data?
+    func search(_ text: String?)
 }
 enum SearchResultListState {
     case loading
     case loaded
+    case refreshList
+    case goToDetails(Product)
+    case error
 }
+@MainActor
 protocol SearchResultListViewModelOutput: AnyObject {
     func updateState(_ state: SearchResultListState)
 }
@@ -32,22 +36,39 @@ class SearchResultListViewModelImpl: SearchResultListViewModelProtocol {
     
     private let productService: ProductService
     private let imgService: ImageService
+    private let searchService: SearchService
     
     init(coordinator: MiniMeliCoordinator,
          productService: ProductService,
          imgService: ImageService,
+         searchService: SearchService,
          productsList: [Product] = []) {
         self.coordinator = coordinator
         self.productService = productService
         self.imgService = imgService
+        self.searchService = searchService
         self.productsList = productsList
     }
-    
-    func openDetails(for selectedItem: Product) {
-        coordinator.route(.itemDetails(selectedItem))
-    }
-    
+
     func loadImage(for url: String) async -> Data? {
         return try? await imgService.getItmage(from: url)
+    }
+    
+    func search(_ text: String?) {
+        Task { [weak self] in
+            guard let self = self else { return }
+            guard let textSearch = text else {
+                return
+            }
+            await self.viewOutput?.updateState(.loading)
+            do {
+                let result = try await searchService.search(query: textSearch)
+                productsList = result
+                await self.viewOutput?.updateState(.refreshList)
+            } catch {
+                print(error)
+                await self.viewOutput?.updateState(.error)
+            }
+        }
     }
 }

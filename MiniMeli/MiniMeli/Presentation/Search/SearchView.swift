@@ -67,7 +67,7 @@ class SearchView: UIView {
     
     // MARK: - Private methods
     @objc private func clearTapped() {
-        searchBar.text = ""
+        searchBar.text = .empty
         searchBar.resignFirstResponder()
         updateSearchBarState(isEditing: false)
     }
@@ -75,7 +75,7 @@ class SearchView: UIView {
     private func updateSearchBarState(isEditing: Bool) {
         searchIcon.isHidden = isEditing
         clearButton.isHidden = !isEditing
-        searchBar.placeholder = isEditing ? "" : Text.placeHolder
+        searchBar.placeholder = isEditing ? .empty : Text.placeHolder
     }
 }
 
@@ -88,10 +88,11 @@ extension SearchView: ViewCodeConfiguration {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: topAnchor, constant: Space.s4),
+            searchBar.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Space.s4),
             searchBar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Space.s16),
             searchBar.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Space.s16),
-            searchBar.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -Space.s32),
-            searchBar.heightAnchor.constraint(equalToConstant: Space.s40),
+
             searchIcon.widthAnchor.constraint(equalToConstant: Layout.iconSize),
             searchIcon.heightAnchor.constraint(equalToConstant: Layout.iconSize),
             clearButton.widthAnchor.constraint(equalToConstant: Layout.iconSize),
@@ -106,7 +107,6 @@ extension SearchView: ViewCodeConfiguration {
         searchBar.delegate = self
     }
 }
-
 
 extension SearchView: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {

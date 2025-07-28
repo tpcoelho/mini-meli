@@ -10,7 +10,7 @@ import UIKit
 extension UIViewController {
     func setupNavigationBar() {
         let backItem = UIBarButtonItem()
-        backItem.title = ""
+        backItem.title = .empty
         backItem.tintColor = Colors.Action.primary
         navigationItem.backBarButtonItem = backItem
     }

@@ -8,13 +8,6 @@
 
 import UIKit
 
-protocol BaseCoordinator: AnyObject {
-    var navigationController: UINavigationController { get set }
-    
-    func start()
-}
-
-/// App coordinator is the only one coordinator which will exist during app's life cycle
 class AppCoordinator: BaseCoordinator {
     var navigationController: UINavigationController
 

@@ -124,14 +124,14 @@ class SearchResultItemCell: UITableViewCell {
         self.addGestureRecognizer(singleTapGesture)
     }
     
-    func configureCell(_ item: Product) {
-        priceLabel.text = item.price.asCurrency(currencyCode: item.currencyId)
-        quantityLabel.text = "\(DefaultText.quantity): \(item.availableQuantity)"
-        secondRowLabel.text = item.title
-        thirdRowLabel.text = "\(DefaultText.sellerBy): \(item.seller.nickname)"
-        fourthRowLabel.text = "id: \(item.id)" // Mostrando o id apenas para facilitar o uso de mock
+    func configureCell(_ product: Product) {
+        priceLabel.text = product.price.asCurrency(currencyCode: product.currencyId)
+        quantityLabel.text = "\(DefaultText.quantity): \(product.availableQuantity)"
+        secondRowLabel.text = product.title
+        thirdRowLabel.text = "\(DefaultText.sellerBy): \(product.seller.nickname)"
+        fourthRowLabel.text = "id: \(product.id)" // Mostrando o id apenas para facilitar o uso de mock
         Task { [weak self] in
-            await self?.setImage(from: item.thumbnail)
+            await self?.setImage(from: product.thumbnail)
         }
     }
     

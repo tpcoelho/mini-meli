@@ -1,5 +1,5 @@
 //
-//  ItemDetailsViewModel.swift
+//  ProductDetailsViewModel.swift
 //  MiniMeli
 //
 //  Created by Tiago P. Coelho on 26/07/25.
@@ -8,30 +8,31 @@
 import Foundation
 import UIKit
 
-protocol ItemDetailsViewModelProtocol: AnyObject {
+protocol ProductDetailsViewModelProtocol: AnyObject {
     var coordinator: MiniMeliCoordinator { get }
-    var viewOutput: ItemDetailsViewModelOutput? { get set }
+    var viewOutput: ProductDetailsViewModelOutput? { get set }
     var product: Product { get }
     var productResponse: ProductDetailsResponse? { get }
     
     func viewDidLoad()
 }
-enum ItemDetailsState {
+enum ProductDetailsState {
     case loading
     case loaded
+    case error
 }
 
 @MainActor
-protocol ItemDetailsViewModelOutput: AnyObject {
-    func updateState(_ state: ItemDetailsState)
+protocol ProductDetailsViewModelOutput: AnyObject {
+    func updateState(_ state: ProductDetailsState)
 }
 
-class ItemDetailsViewModelImpl: ItemDetailsViewModelProtocol {
+class ProductDetailsViewModelImpl: ProductDetailsViewModelProtocol {
     let coordinator: MiniMeliCoordinator
     var product: Product
     var productResponse: ProductDetailsResponse?
     
-    weak var viewOutput: ItemDetailsViewModelOutput?
+    weak var viewOutput: ProductDetailsViewModelOutput?
     
     private let productService: ProductService
     private let imgService: ImageService
@@ -78,9 +79,7 @@ class ItemDetailsViewModelImpl: ItemDetailsViewModelProtocol {
                 await self.viewOutput?.updateState(.loaded)
             } catch {
                 print("Erro ao carregar detalhes: \(error.localizedDescription)")
-                // TODO: criar erro
-                await self.viewOutput?.updateState(.loaded)
-                self.coordinator.route(.error)
+                await self.viewOutput?.updateState(.error)
             }
         }
     }

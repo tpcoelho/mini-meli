@@ -1,5 +1,5 @@
 //
-//  ItemDetailsView.swift
+//  ProductDetailsView.swift
 //  MiniMeli
 //
 //  Created by Tiago P. Coelho on 26/07/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ItemDetailsView: UIView {
+class ProductDetailsView: UIView {
     // MARK: - UI Properties
     private let categoryBreadcrumb: UILabel = {
         let label = UILabel()
@@ -108,7 +108,6 @@ class ItemDetailsView: UIView {
         return label
     }()
    
-    
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -151,7 +150,7 @@ class ItemDetailsView: UIView {
     }
 }
 
-extension ItemDetailsView: ViewCodeConfiguration {
+extension ProductDetailsView: ViewCodeConfiguration {
     func buildViewHierarchy() {
         addSubview(categoryBreadcrumb)
         addSubview(imageGallery)

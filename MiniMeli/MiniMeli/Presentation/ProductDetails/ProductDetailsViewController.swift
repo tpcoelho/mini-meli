@@ -1,5 +1,5 @@
 //
-//  ItemDetailsViewController.swift
+//  ProductDetailsViewController.swift
 //  MiniMeli
 //
 //  Created by Tiago P. Coelho on 26/07/25.
@@ -8,20 +8,20 @@
 
 import UIKit
 
-class ItemDetailsViewController: UIViewController {
-    private let viewModel: ItemDetailsViewModelProtocol
+class ProductDetailsViewController: UIViewController {
+    private let viewModel: ProductDetailsViewModelProtocol
     private lazy var scrollView: UIScrollView = {
         let view = UIScrollView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    private lazy var mainView: ItemDetailsView = {
-        let view = ItemDetailsView()
+    private lazy var mainView: ProductDetailsView = {
+        let view = ProductDetailsView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    init(viewModel: ItemDetailsViewModelProtocol) {
+    init(viewModel: ProductDetailsViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         setupView()
@@ -37,7 +37,7 @@ class ItemDetailsViewController: UIViewController {
     }
 }
 
-extension ItemDetailsViewController: ViewCodeConfiguration {
+extension ProductDetailsViewController: ViewCodeConfiguration {
     func buildViewHierarchy() {
         view.addSubview(scrollView)
         scrollView.addSubview(mainView)
@@ -64,8 +64,8 @@ extension ItemDetailsViewController: ViewCodeConfiguration {
     }
 }
 
-extension ItemDetailsViewController: ItemDetailsViewModelOutput {
-    func updateState(_ state: ItemDetailsState) {
+extension ProductDetailsViewController: ProductDetailsViewModelOutput {
+    func updateState(_ state: ProductDetailsState) {
         switch state {
         case .loading:
             LoadingHUD.shared.start()
@@ -75,6 +75,13 @@ extension ItemDetailsViewController: ItemDetailsViewModelOutput {
                 return
             }
             mainView.setupDetails(for: details)
+        case .error:
+            LoadingHUD.shared.stop()
+            if var stack = navigationController?.viewControllers {
+                stack.removeLast()
+                navigationController?.setViewControllers(stack, animated: false)
+            }
+            viewModel.coordinator.route(.error(.genericError))
         }
     }
 }

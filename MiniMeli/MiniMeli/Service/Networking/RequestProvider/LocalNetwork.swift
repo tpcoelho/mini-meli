@@ -16,7 +16,10 @@ class LocalNetwork: RequestProvider {
     func fetch<T: Decodable>(endpoint: String, query: String) async throws -> T {
         let fileName = getFileName(endpoint, query: query)
         guard let url = Bundle.main.url(forResource: fileName, withExtension: "json") else {
-            throw NSError(domain: "LocalNetwork", code: 1, userInfo: [NSLocalizedDescriptionKey: "File '\(fileName)' not found"])
+            if EndpointApi(rawValue: endpoint) == .search {
+                return SearchResponse(siteId: .empty, countryDefaultTimeZone: .empty, query: .empty, results: []) as! T
+            }
+            throw NSError(domain: "LocalNetwork", code: 2, userInfo: [NSLocalizedDescriptionKey: "File '\(fileName)' not found"])
         }
         let data = try Data(contentsOf: url)
         let decoder = JSONDecoder()
@@ -60,7 +63,7 @@ extension LocalNetwork {
         case .productDetails:
             return "item-\(query)"
         default:
-            return ""
+            return .empty
         }
     }
 }

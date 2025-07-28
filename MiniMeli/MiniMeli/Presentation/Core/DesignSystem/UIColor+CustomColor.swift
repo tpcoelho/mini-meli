@@ -24,6 +24,7 @@ extension UIColor {
     }
 }
 
+// TODO: revisar cores
 struct Colors {
     struct Action {
         static var primary = UIColor(hex: "#002B5B")             // Azul principal Forte

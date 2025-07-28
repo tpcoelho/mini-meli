@@ -9,14 +9,27 @@ import Foundation
 
 protocol SearchViewModelProtocol: AnyObject {
     var coordinator: MiniMeliCoordinator { get }
+    var viewOutput: SearchViewModelOutput? { get set }
     
     func search(_ text: String?)
+}
+
+@MainActor
+protocol SearchViewModelOutput: AnyObject {
+    func updateState(_ state: SearchState)
+}
+
+enum SearchState {
+    case loading
+    case loaded([Product])
+    case error
 }
 
 class SearchViewModelImpl: SearchViewModelProtocol {
     
     var coordinator: MiniMeliCoordinator
     private let searchService: SearchService
+    weak var viewOutput: SearchViewModelOutput?
     
     init(coordinator: MiniMeliCoordinator, searchService: SearchService) {
         self.coordinator = coordinator
@@ -24,25 +37,18 @@ class SearchViewModelImpl: SearchViewModelProtocol {
     }
     
     func search(_ text: String?) {
-        guard let textSearch = text else {
-            // TODO: Criar Error
-            coordinator.route(.error)
-            return
-        }
-        LoadingHUD.shared.start()
-        Task {
+        Task { [weak self] in
+            guard let self = self else { return }
+            guard let textSearch = text else {
+                return
+            }
+            await self.viewOutput?.updateState(.loading)
             do {
                 let result = try await searchService.search(query: textSearch)
-                await MainActor.run {
-                    LoadingHUD.shared.stop()
-                    self.coordinator.route(.searchResult(result))
-                }
+                await viewOutput?.updateState(.loaded(result))
             } catch {
-                await MainActor.run {
-                    LoadingHUD.shared.stop()
-                    // TODO: Criar Error
-                    self.coordinator.route(.error)
-                }
+                print(error)
+                await self.viewOutput?.updateState(.error)
             }
         }
     }

@@ -10,12 +10,6 @@ import UIKit
 
 class SearchResultListView: UIView {
     // MARK: - Properties
-    lazy var menuBar: UIView = {
-        let view = UIView(frame: .zero)
-        view.backgroundColor = .red
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(SearchResultItemCell.self, forCellReuseIdentifier: "SearchResultItemCell")
@@ -42,7 +36,6 @@ class SearchResultListView: UIView {
 
 extension SearchResultListView: ViewCodeConfiguration {
     func buildViewHierarchy() {
-        addSubview(menuBar)
         addSubview(tableView)
     }
     

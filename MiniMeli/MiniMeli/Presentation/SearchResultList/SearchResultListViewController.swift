@@ -10,10 +10,23 @@ import UIKit
 
 class SearchResultListViewController: UIViewController {
     
+    private lazy var menuBar: SearchView = {
+        let view = SearchView(viewDelegate: self)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private lazy var mainView: SearchResultListView = {
         let view = SearchResultListView()
         view.tableView.delegate = self
         view.tableView.dataSource = self
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private lazy var emptyView: EmptyStateView = {
+        let view = EmptyStateView()
+        view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -34,24 +47,31 @@ class SearchResultListViewController: UIViewController {
         super.viewDidLoad()
         viewModel.viewOutput = self
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationItem.titleView = mainView.menuBar
-    }
 }
 
 extension SearchResultListViewController: ViewCodeConfiguration {
     func buildViewHierarchy() {
+        view.addSubview(menuBar)
         view.addSubview(mainView)
+        view.addSubview(emptyView)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            mainView.topAnchor.constraint(equalTo: view.topAnchor),
+            menuBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            menuBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Space.s8),
+            menuBar.trailingAnchor.constraint(equalTo: view.trailingAnchor,  constant: -Space.s8),
+            menuBar.heightAnchor.constraint(equalToConstant: Space.s32),
+            
+            mainView.topAnchor.constraint(equalTo: menuBar.bottomAnchor, constant: Space.s1),
             mainView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mainView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mainView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            mainView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            emptyView.topAnchor.constraint(equalTo: menuBar.bottomAnchor, constant: Space.s1),
+            emptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            emptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            emptyView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
@@ -63,14 +83,26 @@ extension SearchResultListViewController: ViewCodeConfiguration {
 
 extension SearchResultListViewController: SearchResultListViewModelOutput {
     func updateState(_ state: SearchResultListState) {
-        Task { @MainActor in
-            switch state {
-            case .loading:
-                LoadingHUD.shared.start()
-            case .loaded:
-                LoadingHUD.shared.stop()
-                self.mainView.tableView.reloadData()
+        switch state {
+        case .loading:
+            LoadingHUD.shared.start()
+        case .loaded:
+            LoadingHUD.shared.stop()
+        case .refreshList:
+            LoadingHUD.shared.stop()
+            if viewModel.productsList.isEmpty {
+                emptyView.isHidden = false
+                mainView.isHidden = true
+            } else {
+                emptyView.isHidden = true
+                mainView.isHidden = false
             }
+            self.mainView.tableView.reloadData()
+        case .goToDetails(let product):
+            viewModel.coordinator.route(.productDetails(product))
+        case .error:
+            LoadingHUD.shared.stop()
+            viewModel.coordinator.route(.error(.genericError))
         }
     }
 }
@@ -93,12 +125,18 @@ extension SearchResultListViewController: UITableViewDataSource, UITableViewDele
 extension SearchResultListViewController: SearchResultItemCellDelegate {
     func cellDidSingleTap(_ cell: SearchResultItemCell) {
         if let indexPath = mainView.tableView.indexPath(for: cell) {
-            let item = viewModel.productsList[indexPath.row]
-            viewModel.openDetails(for: item)
+            let product = viewModel.productsList[indexPath.row]
+            updateState(.goToDetails(product))
         }
     }
     
     func loadImage(for url: String) async -> Data? {
         return await viewModel.loadImage(for: url)
+    }
+}
+// MARK: - SearchBarDelegate
+extension SearchResultListViewController: SearchViewDelegate {
+    func textFieldShouldReturn(_ text: String?) {
+        viewModel.search(text)
     }
 }
