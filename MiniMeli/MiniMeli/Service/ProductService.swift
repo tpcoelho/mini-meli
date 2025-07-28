@@ -13,22 +13,22 @@ class ProductService {
     }
     
     func searchProducts(query: String) async throws -> [Product] {
-        let searchResponse: SearchResponse = try await request.fetch(endpoint: EndpointApi.search.rawValue, query: query.lowercased())
+        let searchResponse: SearchResponse = try await request.make(requestobj: MiniMeliRequest.search(query: query))
         return searchResponse.results
     }
     
     func getProductDetails(productId: String) async throws -> ProductDetails {
-        let productDetails: ProductDetails = try await request.fetch(endpoint: EndpointApi.productDetails.rawValue, query: productId)
+        let productDetails: ProductDetails = try await  request.make(requestobj: MiniMeliRequest.productDetails(productId: productId))
         return productDetails
     }
     
-    func getCategory(productId: String) async throws -> ProductCategory {
-        let productCategory: ProductCategory = try await request.fetch(endpoint: EndpointApi.categories.rawValue, query: productId)
+    func getCategory(product: Product) async throws -> ProductCategory {
+        let productCategory: ProductCategory = try await request.make(requestobj: MiniMeliRequest.categories(product: product))
         return productCategory
     }
     
     func getDescription(productId: String) async throws -> ProductDescription {
-        let productDescription: ProductDescription = try await request.fetch(endpoint: EndpointApi.description.rawValue, query: productId)
+        let productDescription: ProductDescription = try await request.make(requestobj: MiniMeliRequest.description(productId: productId))
         return productDescription
     }
 }

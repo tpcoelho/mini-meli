@@ -29,6 +29,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        handleDeeplink(url)
+        return true
+    }
+    
+    func handleDeeplink(_ url: URL) {
+        print("Deeplink recebido: \(url.absoluteString)")
 
+        let path = url.pathComponents
+        if path.contains("produto"), let id = path.last {
+            // Exemplo: meuapp://produto/123
+            print("Abrir produto com ID: \(id)")
+            // Aqui você pode rotear com seu Coordinator
+        }
+    }
 }
 

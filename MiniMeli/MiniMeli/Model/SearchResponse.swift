@@ -8,9 +8,9 @@
 import Foundation
 
 struct SearchResponse: Decodable {
-    let siteId: String
-    let countryDefaultTimeZone: String
-    let query: String
+    let siteId: String?
+    let countryDefaultTimeZone: String?
+    let query: String?
     let results: [Product]
 
     enum CodingKeys: String, CodingKey {

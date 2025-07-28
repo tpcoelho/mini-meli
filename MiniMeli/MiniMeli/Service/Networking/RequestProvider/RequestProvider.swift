@@ -7,6 +7,6 @@
 
 import Foundation
 protocol RequestProvider: AnyObject {
-    func fetch<T: Decodable>(endpoint: String, query: String) async throws -> T
+    func make<T: Decodable>(requestobj: RequestObj) async throws -> T
     func fetchImage(url: URL) async throws -> Data?
 }

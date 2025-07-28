@@ -15,7 +15,7 @@ class SearchService {
     }
     
     func search(query: String) async throws -> [Product] {
-        let searchResponse: SearchResponse = try await request.fetch(endpoint: EndpointApi.search.rawValue, query: query.lowercased())
+        let searchResponse: SearchResponse = try await request.make(requestobj: MiniMeliRequest.search(query: query.lowercased()))
         return searchResponse.results
     }
 }

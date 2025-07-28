@@ -39,11 +39,7 @@ struct Colors {
         static var heading01 = UIColor(hex: "#002B5B")
         static var heading02 = UIColor(hex: "#00468C")
         static var text = UIColor(hex: "#0E2325")
-        static var body01 = UIColor(hex: "#0E2325")
-        static var body02 = UIColor(hex: "#1B464B")
-        static var highlight = UIColor(hex: "#FFF176")           // Amarelo claro
-        static var link = UIColor(hex: "#002B5B")
-        static var linkVariant = UIColor(hex: "#00468C")
+        static var body = UIColor(hex: "#0E2325")
     }
     
     struct Background {
@@ -52,23 +48,12 @@ struct Colors {
         static var variant02 = UIColor(hex: "#E3F2FD")
     }
     
-    struct Border {
-        static var soft = UIColor(hex: "#CFD1D3")
-        static var medium = UIColor(hex: "#5F6D66")
-        static var strong = UIColor(hex: "#002B5B")
-    }
-    
     struct Feedback {
         static var information = UIColor(hex: "#002B5B")
-        static var informationContrast = UIColor(hex: "#FFFFFF")
         static var success = UIColor(hex: "#0B5B38")
-        static var successContrast = UIColor(hex: "#FFFFFF")
         static var error = UIColor(hex: "#CC0000")
-        static var errorContrast = UIColor(hex: "#FFFFFF")
-        static var alert = UIColor(hex: "#FFD54F")               // Amarelo alaranjado claro
-        static var alertContrast = UIColor(hex: "#000000")       // Texto preto p/ contraste
         static var neutral = UIColor(hex: "#1B464B")
-        static var neutralContrast = UIColor(hex: "#FFFFFF")
+        static var alert = UIColor(hex: "#FFD54F")               // Amarelo alaranjado claro
     }
     struct Contrast {
         static var black = UIColor(hex: "#000000")

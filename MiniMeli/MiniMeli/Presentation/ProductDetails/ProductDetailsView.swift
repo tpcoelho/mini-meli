@@ -102,7 +102,7 @@ class ProductDetailsView: UIView {
     private let descriptionValueLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: Space.s12, weight: .semibold)
-        label.textColor = Colors.Text.body01
+        label.textColor = Colors.Text.body
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

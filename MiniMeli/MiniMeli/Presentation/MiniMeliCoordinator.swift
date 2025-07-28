@@ -23,8 +23,42 @@ class MiniMeliCoordinator: BaseCoordinator {
         navigationController.setNavigationBarHidden(false, animated: false)
     }
     
+    @MainActor
     func start() {
-        print("geting token...")
+        provider = APINetwork()
+        // FIXME: O code deveria ser inserido via deeplink. Atualize manualmente
+//        OAuthSession.shared.clear()
+        print(OAuthSession.shared.accessToken)
+        if OAuthSession.shared.accessToken == nil {
+            let alert = MiniMeliAlertView.create() { code in
+                Task {
+                    do {
+                        let token = try await APINetwork().requestOAuthToken(code: code)
+                        OAuthSession.shared.store(token: token)
+                        print("✅ Token armazenado com sucesso")
+                        let teste = Product(id: "", title: "", categoryId: "MLA389313", thumbnail: "", currencyId: "", price: 0.0, availableQuantity: 1, seller: Seller(id: 1, nickname: ""))
+                        let description = try await ProductService(request: self.provider).searchProducts(query: "arroz")
+                        print("✅ Descrição: \(description)")
+                        self.route(.search)
+                    } catch {
+                        print("❌ Falha ao autenticar: \(error)")
+                    }
+                }
+            }
+            navigationController.present(alert, animated: true)
+        } else {
+            Task {
+                do {
+                    let teste = Product(id: "", title: "", categoryId: "MLA389313", thumbnail: "", currencyId: "", price: 0.0, availableQuantity: 1, seller: Seller(id: 1, nickname: ""))
+                    let description = try await ProductService(request: self.provider).searchProducts(query: "arroz")
+                    print("✅ Descrição: \(description)")
+                    self.route(.search)
+                } catch {
+                    print("❌ Falha ao autenticar: \(error)")
+                }
+            }
+            self.route(.search)
+        }
     }
     
     func startMock() {

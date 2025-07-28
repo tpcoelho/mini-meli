@@ -13,10 +13,10 @@ class LocalNetwork: RequestProvider {
     init(useFakeLoading: Bool = true) {
         self.useFakeLoading = useFakeLoading
     }
-    func fetch<T: Decodable>(endpoint: String, query: String) async throws -> T {
-        let fileName = getFileName(endpoint, query: query)
+    func make<T: Decodable>(requestobj: RequestObj) async throws -> T {
+        let fileName = getFileName(requestobj)
         guard let url = Bundle.main.url(forResource: fileName, withExtension: "json") else {
-            if EndpointApi(rawValue: endpoint) == .search {
+            if requestobj.identifier == "search" {
                 return SearchResponse(siteId: .empty, countryDefaultTimeZone: .empty, query: .empty, results: []) as! T
             }
             throw NSError(domain: "LocalNetwork", code: 2, userInfo: [NSLocalizedDescriptionKey: "File '\(fileName)' not found"])
@@ -52,16 +52,17 @@ class LocalNetwork: RequestProvider {
 // MARK: - Helper
 
 extension LocalNetwork {
-    private func getFileName(_ endpoint: String, query: String) -> String {
-        switch EndpointApi(rawValue: endpoint){
-        case .search:
-            return "search-MLA-\(query)"
-        case .categories:
-            return "item-\(query)-category"
-        case .description:
-            return "item-\(query)-description"
-        case .productDetails:
-            return "item-\(query)"
+    private func getFileName(_ requestobj: RequestObj) -> String {
+        let itemid = requestobj.additionalInfo ?? .empty
+        switch requestobj.identifier {
+        case "search":
+            return "search-MLA-\(itemid)"
+        case "categories":
+            return "item-\(itemid)-category"
+        case "description":
+            return "item-\(itemid)-description"
+        case "productDetails":
+            return "item-\(itemid)"
         default:
             return .empty
         }

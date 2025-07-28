@@ -54,7 +54,7 @@ class ProductDetailsViewModelImpl: ProductDetailsViewModelProtocol {
             await self.viewOutput?.updateState(.loading)
             do {
                 async let productDetails = try productService.getProductDetails(productId: product.id)
-                async let category = try productService.getCategory(productId: product.id)
+                async let category = try productService.getCategory(product: product)
                 async let description = try productService.getDescription(productId: product.id)
                 
                 let (details, cat, desc) = try await (productDetails, category, description)
