@@ -23,6 +23,7 @@ enum SearchResultListState {
     case goToDetails(Product)
     case error
 }
+
 @MainActor
 protocol SearchResultListViewModelOutput: AnyObject {
     func updateState(_ state: SearchResultListState)

@@ -44,8 +44,8 @@ final class LoadingHUD {
         NSLayoutConstraint.activate([
             container.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
             container.centerYAnchor.constraint(equalTo: overlay.centerYAnchor),
-            container.widthAnchor.constraint(equalToConstant: 80),
-            container.heightAnchor.constraint(equalToConstant: 80),
+            container.widthAnchor.constraint(equalToConstant: Space.s80),
+            container.heightAnchor.constraint(equalToConstant: Space.s80),
             
             spinner.centerXAnchor.constraint(equalTo: container.centerXAnchor),
             spinner.centerYAnchor.constraint(equalTo: container.centerYAnchor)

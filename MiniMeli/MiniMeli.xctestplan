@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "6BDBE1B6-C348-434D-8B6E-2CC22E67BF4F",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:MiniMeli.xcodeproj",
+      "identifier" : "5495194D2E303F73004FDA79",
+      "name" : "MiniMeli"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:MiniMeli.xcodeproj",
+        "identifier" : "549519632E303F76004FDA79",
+        "name" : "MiniMeliTests"
+      }
+    }
+  ],
+  "version" : 1
+}

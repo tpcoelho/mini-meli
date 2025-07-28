@@ -14,7 +14,7 @@ struct MeliAPI {
 }
 
 struct MiniMeliAPI {
-    static let urlAuth = "https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=\(clientId)&redirect_uri=\(redirectURI)"
+    static let urlAuth = "https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=\(clientId)&redirect_uri=\(redirectURI)" // Para abrir no safari
     static let clientId = "7189118502852829"
     static let clientSecret = "3JHZdDDhD1G9gVE97cy8LxtXGy0IwrXf"
     static let redirectURI = "https://minimeli://token"

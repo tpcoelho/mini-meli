@@ -14,7 +14,7 @@ enum MiniMeliRoute {
     case error(ErrorType)
 }
 
-class MiniMeliCoordinator: BaseCoordinator {
+class MiniMeliCoordinator: @preconcurrency BaseCoordinator {
     var navigationController: UINavigationController
     private var provider: RequestProvider = LocalNetwork()
     
@@ -36,9 +36,6 @@ class MiniMeliCoordinator: BaseCoordinator {
                         let token = try await APINetwork().requestOAuthToken(code: code)
                         OAuthSession.shared.store(token: token)
                         print("✅ Token armazenado com sucesso")
-                        let teste = Product(id: "", title: "", categoryId: "MLA389313", thumbnail: "", currencyId: "", price: 0.0, availableQuantity: 1, seller: Seller(id: 1, nickname: ""))
-                        let description = try await ProductService(request: self.provider).searchProducts(query: "arroz")
-                        print("✅ Descrição: \(description)")
                         self.route(.search)
                     } catch {
                         print("❌ Falha ao autenticar: \(error)")
@@ -47,16 +44,6 @@ class MiniMeliCoordinator: BaseCoordinator {
             }
             navigationController.present(alert, animated: true)
         } else {
-            Task {
-                do {
-                    let teste = Product(id: "", title: "", categoryId: "MLA389313", thumbnail: "", currencyId: "", price: 0.0, availableQuantity: 1, seller: Seller(id: 1, nickname: ""))
-                    let description = try await ProductService(request: self.provider).searchProducts(query: "arroz")
-                    print("✅ Descrição: \(description)")
-                    self.route(.search)
-                } catch {
-                    print("❌ Falha ao autenticar: \(error)")
-                }
-            }
             self.route(.search)
         }
     }

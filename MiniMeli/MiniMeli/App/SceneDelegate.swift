@@ -55,32 +55,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-    
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        if let urlContext = URLContexts.first {
-            let url = urlContext.url
-            
-            if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-               components.scheme == "minimeli",
-               components.host == "congrat",
-               components.path.contains("success") {
-                
-                //                    if let rootViewController = window?.rootViewController {
-                //                        let successViewController = SuccessViewController {
-                //                            rootViewController.dismiss(animated: true, completion: nil)
-                //                        }
-                //
-                //                        if let presentingViewController = rootViewController.presentedViewController {
-                //                            presentingViewController.dismiss(animated: true) {
-                //                                rootViewController.present(successViewController, animated: true, completion: nil)
-                //                            }
-                //                        } else {
-                //                            rootViewController.present(successViewController, animated: true, completion: nil)
-                //                        }
-                //                    }
-            }
-        }
-    }
-    
 }
 

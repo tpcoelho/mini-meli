@@ -14,7 +14,7 @@ final class MiniMeliAlertView: UIAlertController {
     static func create(onSubmit: @escaping (String) -> Void) -> MiniMeliAlertView {
         let alert = MiniMeliAlertView(
             title: "Autenticação",
-            message: "Cole seu código: TG-1234...",
+            message: "Cole seu código: TG-XXXXXX...",
             preferredStyle: .alert
         )
         alert.onSubmit = onSubmit
