@@ -11,9 +11,20 @@ import SnapshotTesting
 
 final class ErrorViewControllerUITests: XCTestCase {
     
-    func testErrorViewControllerSnapshot() {
+    func test_genericError() {
         // Arrange
         let vc = ErrorViewController(error: ErrorType.genericError.getErrorObj())
+        
+        vc.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667) // iPhone 8
+        
+        withSnapshotTesting(record: false) {
+            assertSnapshot(of: vc, as: .image)
+        }
+    }
+    
+    func test_defaultType() {
+        // Arrange
+        let vc = ErrorViewController(error: ErrorType.searchNotFound.getErrorObj())
         
         vc.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667) // iPhone 8
         

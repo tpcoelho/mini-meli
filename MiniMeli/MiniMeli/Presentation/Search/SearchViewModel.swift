@@ -28,10 +28,10 @@ enum SearchState {
 class SearchViewModelImpl: SearchViewModelProtocol {
     
     var coordinator: MiniMeliCoordinator
-    private let searchService: SearchService
+    private let searchService: SearchServiceProtocol
     weak var viewOutput: SearchViewModelOutput?
     
-    init(coordinator: MiniMeliCoordinator, searchService: SearchService) {
+    init(coordinator: MiniMeliCoordinator, searchService: SearchServiceProtocol) {
         self.coordinator = coordinator
         self.searchService = searchService
     }

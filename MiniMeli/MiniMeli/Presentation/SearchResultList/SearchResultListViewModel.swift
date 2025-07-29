@@ -35,14 +35,14 @@ class SearchResultListViewModelImpl: SearchResultListViewModelProtocol {
     var productsList: [Product]
     weak var viewOutput: SearchResultListViewModelOutput?
     
-    private let productService: ProductService
-    private let imgService: ImageService
-    private let searchService: SearchService
+    private let productService: ProductServiceProtocol
+    private let imgService: ImageServiceProtocol
+    private let searchService: SearchServiceProtocol
     
     init(coordinator: MiniMeliCoordinator,
-         productService: ProductService,
-         imgService: ImageService,
-         searchService: SearchService,
+         productService: ProductServiceProtocol,
+         imgService: ImageServiceProtocol,
+         searchService: SearchServiceProtocol,
          productsList: [Product] = []) {
         self.coordinator = coordinator
         self.productService = productService
@@ -52,7 +52,7 @@ class SearchResultListViewModelImpl: SearchResultListViewModelProtocol {
     }
 
     func loadImage(for url: String) async -> Data? {
-        return try? await imgService.getItmage(from: url)
+        return try? await imgService.getImage(from: url)
     }
     
     func search(_ text: String?) {

@@ -7,7 +7,11 @@
 
 import Foundation
 
-class SearchService {
+protocol SearchServiceProtocol {
+    func search(query: String) async throws -> [Product]
+}
+
+class SearchService: SearchServiceProtocol {
     let request: RequestProvider
     
     init(request: RequestProvider) {

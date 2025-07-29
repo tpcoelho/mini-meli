@@ -35,7 +35,7 @@ struct ProductImage: Codable {
     let secureUrl: String
     let size: String
     let maxSize: String
-    let quality: String
+    let quality: String?
     
     enum CodingKeys: String, CodingKey {
         case id

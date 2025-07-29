@@ -9,15 +9,25 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:MiniMeli.xcodeproj",
+          "identifier" : "5495194D2E303F73004FDA79",
+          "name" : "MiniMeli"
+        }
+      ]
+    },
     "targetForVariableExpansion" : {
       "containerPath" : "container:MiniMeli.xcodeproj",
       "identifier" : "5495194D2E303F73004FDA79",
       "name" : "MiniMeli"
-    }
+    },
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {
-      "parallelizable" : true,
+      "parallelizable" : false,
       "target" : {
         "containerPath" : "container:MiniMeli.xcodeproj",
         "identifier" : "549519632E303F76004FDA79",

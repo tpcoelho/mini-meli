@@ -7,14 +7,18 @@
 
 import Foundation
 
-class ImageService {
+protocol ImageServiceProtocol {
+    func getImage(from urlString: String) async throws -> Data?
+}
+
+class ImageService: ImageServiceProtocol {
     let request: RequestProvider
     
     init(request: RequestProvider) {
         self.request = request
     }
     
-    func getItmage(from urlString: String) async throws -> Data? {
+    func getImage(from urlString: String) async throws -> Data? {
         guard let url = URL(string: urlString) else { return nil }
         return try await request.fetchImage(url: url)
     }

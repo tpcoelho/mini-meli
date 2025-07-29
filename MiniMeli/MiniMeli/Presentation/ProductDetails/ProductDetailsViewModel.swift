@@ -34,12 +34,12 @@ class ProductDetailsViewModelImpl: ProductDetailsViewModelProtocol {
     
     weak var viewOutput: ProductDetailsViewModelOutput?
     
-    private let productService: ProductService
-    private let imgService: ImageService
+    private let productService: ProductServiceProtocol
+    private let imgService: ImageServiceProtocol
     
     init(coordinator: MiniMeliCoordinator,
-         productService: ProductService,
-         imgService: ImageService,
+         productService: ProductServiceProtocol,
+         imgService: ImageServiceProtocol,
          product: Product) {
         self.coordinator = coordinator
         self.productService = productService
@@ -63,7 +63,7 @@ class ProductDetailsViewModelImpl: ProductDetailsViewModelProtocol {
                 var images: [UIImage] = []
                 
                 for url in imageURLs {
-                    if let data = try await imgService.getItmage(from: url),
+                    if let data = try await imgService.getImage(from: url),
                        let image = UIImage(data: data) {
                         images.append(image)
                     }

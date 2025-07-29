@@ -5,7 +5,14 @@
 //  Created by Tiago P. Coelho on 25/07/25.
 //
 
-class ProductService {
+protocol ProductServiceProtocol {
+    func searchProducts(query: String) async throws -> [Product]
+    func getProductDetails(productId: String) async throws -> ProductDetails
+    func getCategory(product: Product) async throws -> ProductCategory
+    func getDescription(productId: String) async throws -> ProductDescription
+}
+
+class ProductService: ProductServiceProtocol {
     let request: RequestProvider
     
     init(request: RequestProvider) {
