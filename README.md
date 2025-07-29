@@ -28,6 +28,6 @@
 
 1. Clone o projeto
 2. Configure o token OAuth manualmente
-2.a Usando o fluxo com mock, utilize as seguintes palavras na busca: Arroz ou Cafe
+2.a Usando o fluxo com mock, utilize as seguintes palavras na busca: **Arroz** ou **Cafe**
 3. Rode com `⌘ + R`
 4. Testes com `⌘ + U`
